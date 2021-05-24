@@ -8,7 +8,7 @@ pipeline {
      environment {
         GITLAB_LOGIN = credentials('Intel-Gitlab')
         CURRENT_DATE = sh(script: 'date +"%Y-%m-%d_%H-%M-%S"', returnStdout: true).trim()
-        PROJECT_NAME = "ocm" //Needs to be similar to Gitlab Project name
+        PROJECT_NAME = "ocm"
         GITLAB_BRANCH = "master"
     }
          
