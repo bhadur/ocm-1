@@ -146,9 +146,5 @@ pipeline {
         sudo ../artifacts-ocm/*
         '''
 		}
+	}
     }
-  
-            
-     }
-
-  }
