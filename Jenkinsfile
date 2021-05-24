@@ -42,8 +42,8 @@ pipeline {
                    cd $WORKSPACE
                    python3 /home/ubuntu/OWR_klocwork_report.py --server https://klocwork-jf24.devtools.intel.com --port 8190 --project ${KWPROJ_NAME} --build build_kw --output kw_report_ocm.html
                    zip -r kw_report.zip kw_report_ocm.html
-                   cp kw_report.zip ../artifacts-ocm
-                   rm -rf build
+                   mv kw_report.zip ../artifacts-ocm
+                   rm -rf build .git
                    '''    
                  }
             }
@@ -105,6 +105,49 @@ pipeline {
             }
         }
          
+        post {
+    
+        success {
+
+         	 
+    	 emailext attachLog: true, attachmentsPattern: 'artifacts/*',
+    	   body:'Check console output at https://automate.software-recipes.intel.com/job/EdgeCSP/job/OCM//${BUILD_NUMBER} to view results \n \n-------------------\n ${BUILD_LOG, maxLines=250}',
+    	   to: 'bhadur.a.sm@intel.com',
+    	   subject: 'Build Completed Successfully in Jenkins ocm job: $PROJECT_NAME - #$BUILD_NUMBER'
+    	   
+    	   //updateGitlabCommitStatus name: 'Compile the code', state: 'success'
+		   //updateGitlabCommitStatus name: 'Snyk', state: 'success'
+		   //updateGitlabCommitStatus name: 'Klockwork', state: 'success'
+
+    	   
+        sh'''
+        pwd
+        cd $WORKSPACE
+        sudo rm -rf *
+        sudo ../artifacts-ocm/*
+        '''
+		}
+		
+        failure {
+        
+        emailext attachLog: true, attachmentsPattern: 'artifacts/*',
+    	   body:'Check console output at https://automate.software-recipes.intel.com/job/EdgeCSP/job/OCM//${BUILD_NUMBER} to view results \n \n-------------------\n ${BUILD_LOG, maxLines=250}',
+    	   to: 'bhadur.a.sm@intel.com',
+    	   subject: 'Build Completed Successfully in Jenkins ocm job: $PROJECT_NAME - #$BUILD_NUMBER'
+
+           	 
+    	 updateGitlabCommitStatus name: 'JobStatus', state: 'failed'
+
+    	   
+        sh'''
+        pwd
+        cd $WORKSPACE
+        sudo rm -rf *
+        sudo ../artifacts-ocm/*
+        '''
+		}
+    }
+  
             
      }
 
