@@ -52,23 +52,7 @@ pipeline {
                  }
             }
         
-        stage('Upload: Kw Reports'){
-            steps{
-                    rtUpload (
-                        serverId: 'software-recipes-artifactory',
-                        spec: '''{
-                              "files": [
-                                {
-                                  "pattern": "kw_report.zip",
-                                  "target": "software-recipes-or-local/scan-reports/${PROJECT_NAME}/${CURRENT_DATE}/kw_report.zip"
-                                }
-                             ]
-                        }'''
-                    )
                 
-                }
-        }
-         
          stage('Scan: Checkmarx') {
             steps{
                 echo "Executing Checkmarx Jenkins Plugin to request a Scan"
@@ -86,10 +70,29 @@ pipeline {
 
             sh '''
                 zip -r checkmarx.zip Checkmarx/
+		mkdir artifacts
+		mv ../artifacts-ocm/kw_report.zip artifacts
                 cp checkmarx.zip artifacts
             '''
             }
 
+        }
+	     
+	 stage('Upload: Kw Reports'){
+            steps{
+                    rtUpload (
+                        serverId: 'software-recipes-artifactory',
+                        spec: '''{
+                              "files": [
+                                {
+                                  "pattern": "artifacts/kw_report.zip",
+                                  "target": "software-recipes-or-local/scan-reports/${PROJECT_NAME}/${CURRENT_DATE}/kw_report.zip"
+                                }
+                             ]
+                        }'''
+                    )
+                
+                }
         }
 
         stage('Upload: Checkmarx Reports'){
@@ -99,7 +102,7 @@ pipeline {
                     spec: '''{
                           "files": [
                             {
-                              "pattern": "checkmarx.zip",
+                              "pattern": "artifacts/checkmarx.zip",
                               "target": "software-recipes-or-local/scan-reports/${PROJECT_NAME}/${CURRENT_DATE}/checkmarx.zip"
                             }
                          ]
