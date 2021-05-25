@@ -38,7 +38,8 @@ pipeline {
                    bash build_ocm.sh /home/ubuntu/ocm_tf_setup
                    cd build
                    /home/ubuntu/kw2020/bin/kwbuildproject --force --verbose --license-host klocwork05p.elic.intel.com --license-host 7500 --url https://klocwork-jf24.devtools.intel.com:8190/${KWPROJ_NAME} -o ${KWPROJ_NAME}_Tables kwinject.out
-                   /home/ubuntu/kw2020/bin/kwadmin --url https://klocwork-jf24.devtools.intel.com:8190 load ${KWPROJ_NAME} ${KWPROJ_NAME}_Tables --name $(date +"%Y-%m-%d_%H-%M-%S")
+                   sleep 300
+		   /home/ubuntu/kw2020/bin/kwadmin --url https://klocwork-jf24.devtools.intel.com:8190 load ${KWPROJ_NAME} ${KWPROJ_NAME}_Tables --name $(date +"%Y-%m-%d_%H-%M-%S")
                    cd $WORKSPACE
                    python3 /home/ubuntu/OWR_klocwork_report.py --server https://klocwork-jf24.devtools.intel.com --port 8190 --project ${KWPROJ_NAME} --build build_kw --output kw_report_ocm.html
                    zip -r kw_report.zip kw_report_ocm.html
@@ -125,7 +126,7 @@ pipeline {
         pwd
         cd $WORKSPACE
         sudo rm -rf *
-        sudo ../artifacts-ocm/*
+        sudo rm -rf ../artifacts-ocm
         '''
 		}
 		
@@ -144,7 +145,7 @@ pipeline {
         pwd
         cd $WORKSPACE
         sudo rm -rf *
-        sudo ../artifacts-ocm/*
+        sudo rm -rf ../artifacts-ocm
         '''
 		}
 	}
